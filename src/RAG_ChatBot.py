@@ -1,7 +1,10 @@
-from langchain.document_loaders import PyPDFLoader
+ #from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+ #from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.document_loaders import PyPDFLoader
+ #from langchain.vectorstores import Chroma
 from langchain.llms import HuggingFaceHub
 from langchain import PromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
