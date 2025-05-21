@@ -2,14 +2,12 @@ streamlit==1.45.0
 pandas==2.2.3
 scikit-learn==1.6.1
 matplotlib==3.8.4
-numpy==1.26.4
-
+numpy==2.2.0                    # ✅ Compatible with Python 3.13 and all other deps
 langchain==0.3.25
 langchain-core==0.3.58
-langchain-community==0.3.23  # ✅ COMPATIBLE with langchain-core==0.3.58
+langchain-community==0.3.23     # ✅ Compatible with langchain-core 0.3.58
 langchain-openai==0.3.16
 langchain-pinecone==0.2.6
-
 openai==1.77.0
 pinecone-client==6.0.0
 sentence-transformers==4.1.0
@@ -17,4 +15,4 @@ transformers==4.51.3
 tiktoken==0.9.0
 torch==2.5.1
 protobuf==4.25.3
-chromadb==0.4.22  # ✅ avoids np.float_ issue with NumPy <2.0
+chromadb==0.4.26                # ✅ Compatible with numpy 2.2.0
