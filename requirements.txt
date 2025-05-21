@@ -2,11 +2,11 @@ streamlit==1.45.0
 pandas==2.2.3
 scikit-learn==1.6.1
 matplotlib==3.8.4
-numpy==1.26.4  # ✅ Downgraded to avoid np.float_ issue
-langchain-community==0.0.32  # ✅ Compatible with NumPy <2.0
+numpy==1.26.4
 
 langchain==0.3.25
 langchain-core==0.3.58
+langchain-community==0.3.23  # ✅ COMPATIBLE with langchain-core==0.3.58
 langchain-openai==0.3.16
 langchain-pinecone==0.2.6
 
@@ -17,4 +17,4 @@ transformers==4.51.3
 tiktoken==0.9.0
 torch==2.5.1
 protobuf==4.25.3
-chromadb==0.4.22  # ✅ Compatible with numpy 1.26.4
+chromadb==0.4.22  # ✅ avoids np.float_ issue with NumPy <2.0
