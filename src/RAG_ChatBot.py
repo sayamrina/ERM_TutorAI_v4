@@ -6,7 +6,8 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
  #from langchain.vectorstores import Chroma
 from langchain.llms import HuggingFaceHub
-from langchain import PromptTemplate
+ #from langchain import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
 from langchain.schema.output_parser import StrOutputParser
 from langchain.chains import RetrievalQA
