@@ -11,7 +11,7 @@ langchain-pinecone==0.2.6
 openai==1.77.0
 pinecone-client==6.0.0
 sentence-transformers==4.1.0
-transformers==4.36.2  # ✅ Compatible with chromadb
+transformers==4.41.2    # or 4.41.1, etc.
 tiktoken==0.9.0
 torch==2.5.1
 protobuf==4.25.3
