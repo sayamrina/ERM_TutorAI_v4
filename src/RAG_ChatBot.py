@@ -1,61 +1,82 @@
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.llms import HuggingFaceHub
-from langchain_core.prompts import PromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain.schema.output_parser import StrOutputParser
-from langchain.chains import RetrievalQA
-from langchain_openai import ChatOpenAI
-from dotenv import load_dotenv
 import os
 import glob
-from chromadb.config import Settings
+from dotenv import load_dotenv
+from markitdown import MarkItDown
+from langchain_core.documents import Document
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import Chroma
+from langchain import PromptTemplate
+from langchain.chains import RetrievalQA
+from langchain_openai import ChatOpenAI
 
 class ChatBot:
     def __init__(self):
         load_dotenv()
 
-        # Step 1: Load PDFs
-        pdf_files = glob.glob('./materials/*.pdf')
-        documents = []
-        for file_path in pdf_files:
-            loader = PyPDFLoader(file_path)
-            documents.extend(loader.load())
+        # === Paths & Config ===
+        self.persist_directory = "./chroma_db"
+        self.embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
-        # Step 2: Split text into chunks
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        docs = text_splitter.split_documents(documents)
+        # === Embedding Model ===
+        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
 
-        # Step 3: Embedding model
-        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+        # === Load or Create Vector DB ===
+        if os.path.exists(self.persist_directory) and os.listdir(self.persist_directory):
+            vectordb = Chroma(
+                persist_directory=self.persist_directory,
+                embedding_function=embeddings
+            )
+        else:
+            pdf_files = glob.glob('./materials/*.pdf')
+            documents = []
+            mid = MarkItDown()
+            for file_path in pdf_files:
+                result = mid.convert(file_path)
+                content = result.text_content
+                documents.append(Document(page_content=content, metadata={"source": file_path}))
 
-        # Step 4: Create in-memory Chroma DB
-        vectordb = Chroma.from_documents(
-            documents=docs,
-            embedding=embeddings,
+            text_splitter = CharacterTextSplitter(chunk_size=1500, chunk_overlap=50)
+            docs = text_splitter.split_documents(documents)
+
+            vectordb = Chroma.from_documents(
+                documents=docs,
+                embedding=embeddings,
+                persist_directory=self.persist_directory
+            )
+            vectordb.persist()
+
+        # === LLM Setup ===
+        llm = ChatOpenAI(
+            model_name="gpt-4o",
+            openai_api_key=os.getenv("OPENAI_API_KEY"),
+            temperature=0,
+            stream=False
         )
 
-        # Step 5: Initialize GPT-4o (or fallback)
-        model_name = "gpt-4o"
-        llm = ChatOpenAI(model_name=model_name, openai_api_key=os.getenv("OPENAI_API_KEY"))
-
-        # Step 6: Prompt Template
+        # === Prompt Template ===
         template = """
-    
-        You are an AI tutor of Empirical Research Methos course (ERM). Users will ask you questions about that course. Use the following piece of context to answer the question.
-        If you don't know the answer, just say you don't know.
-        Your answer should be short, clear and concise, no longer than 3 sentences. you can make a list if the answer including some points.
+        You're an AI mentor and tutor for the Empirical Research Methods (ERM) course. When a student asks a question, reply like a supportive human mentor — friendly, encouraging, and natural.
+
+        Structure your response like this:
+
+        1. **Reflection** (max 2 sentences): Share a kind, encouraging comment on the student's question. Was it thoughtful, curious, or well-phrased? Use warm, human-style emojis like 😊, 😄, 🙌, or 😅 to make it feel more personal and relaxed.
+        2. **Answer**: Provide a clear and accurate response based on the course material. Use plain language. Bullet points are okay if helpful.
+        3. **Follow-up**: Offer a tip, encouragement, or next-step suggestion. If possible, recommend a section title, topic, or keyword from the course material. Feel free to add friendly emojis here too.
+
+        Keep it conversational and approachable — like you're talking to a student one-on-one. Avoid robotic or overly formal language.
 
         Context: {context}
         Question: {question}
-        Answer:
+        Response:
         """
+
+
+
         prompt = PromptTemplate(template=template, input_variables=["context", "question"])
 
-        # Step 7: Retriever + QA Chain
-        retriever = vectordb.as_retriever(search_kwargs={"k": 5})
+        # === RAG Chain ===
+        retriever = vectordb.as_retriever(search_kwargs={"k": 3})
         self.rag_chain = RetrievalQA.from_chain_type(
             llm,
             retriever=retriever,
@@ -68,17 +89,22 @@ class ChatBot:
         answer = result["result"]
         sources = result.get("source_documents", [])
 
+        word_count = len(answer.split())
+
         print("\n--- Retrieved Chunks ---")
         for i, doc in enumerate(sources):
-            print(f"[{i+1}] {doc.page_content[:500]}...\n")
+            print(f"[{i+1}] Source: {doc.metadata.get('source', 'Unknown')}")
+            print(doc.page_content[:500], "...\n")
+
+        print(f"🧠 Word count of answer: {word_count}")
 
         if not sources:
             return "This question is not related to my knowledge."
 
-        return answer
+        return f"{answer}\n\n🧠 (Answer contains {word_count} words)"
 
 
-# Usage example:
+# === Example Usage ===
 if __name__ == "__main__":
     chatbot = ChatBot()
     while True:
