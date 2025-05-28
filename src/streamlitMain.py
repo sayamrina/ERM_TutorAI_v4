@@ -11,11 +11,11 @@ logo_image = Image.open("logo_ermai.png")
 # Page config with custom icon
 st.set_page_config(
     page_title="ERM Tutor AI",
-    page_icon=logo_image,  # Use logo as favicon
+    page_icon=logo_image,
     layout="centered"
 )
 
-# Blue theme custom CSS
+# Custom CSS
 st.markdown("""
     <style>
         body {
@@ -49,16 +49,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Display logo in app
+# Display logo
 st.image(logo_image, width=150)
 
-# Title
-st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
+# Copyright below logo — force one line with no wrapping or clipping
+st.markdown(
+    """
+    <div style='width: 150px; text-align: center; font-size: 0.63em; color: #777777; white-space: nowrap; margin-top: 5px; margin-bottom: 20px;'>
+        © 2025 Amrina. All rights reserved.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-# Description
+
+# Title and description
+st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
 st.markdown(
     "Ask me anything about the **Empirical Research Methods (ERM)** course. "
-    "I’ll give short, reliable answers based on your course materials."
+    "I’ll give short, reliable answers based on your course materials — and not just that. "
+    "As your AI tutor, I’m also here to guide you, reflect on your questions, and support your learning journey like a real mentor would. 😊"
 )
 
 # Chat history setup
@@ -75,13 +85,11 @@ for msg in st.session_state.messages:
 # User input
 user_input = st.chat_input("Type your question here...")
 
-# If user sends a message
+# On new user input
 if user_input:
-    # Display user message
     st.chat_message("user").markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # Display assistant response
     with st.chat_message("assistant"):
         with st.spinner("Thinking like a researcher..."):
             try:
