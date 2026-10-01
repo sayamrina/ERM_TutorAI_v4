@@ -9,6 +9,7 @@ from langchain.vectorstores import Chroma
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
 
 class ChatBot:
     def __init__(self):
@@ -19,7 +20,7 @@ class ChatBot:
         self.embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
         # === Embedding Model ===
-        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name, model_kwargs={'device': 'cpu'})
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
         # === Load or Create Vector DB ===
         if os.path.exists(self.persist_directory) and os.listdir(self.persist_directory):
