@@ -19,7 +19,7 @@ class ChatBot:
         self.embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
         # === Embedding Model ===
-        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name)
+        embeddings = HuggingFaceEmbeddings(model_name=self.embedding_model_name, model_kwargs={'device': 'cpu'})
 
         # === Load or Create Vector DB ===
         if os.path.exists(self.persist_directory) and os.listdir(self.persist_directory):
