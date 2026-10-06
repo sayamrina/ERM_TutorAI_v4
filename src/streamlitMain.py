@@ -2,18 +2,20 @@ from RAG_ChatBot import ChatBot
 import streamlit as st
 from PIL import Image
 
-# Initialize chatbot
-bot = ChatBot()
-
-# Load logo image
+# 1. LOAD GAMBAR DAN SET PAGE CONFIG (Wajib jadi perintah st pertama)
 logo_image = Image.open("logo_ermai.png")
-
-# Page config with custom icon
 st.set_page_config(
     page_title="ERM Tutor AI",
     page_icon=logo_image,
     layout="centered"
 )
+# 2. INISIASI BOT DENGAN CACHE (Ditaruh setelah page config)
+@st.cache_resource
+def get_bot():
+    return ChatBot()
+
+bot = get_bot()
+
 
 # Custom CSS
 st.markdown("""
@@ -46,13 +48,27 @@ st.markdown("""
         .stMarkdown h1 {
             color: #003366;
         }
+        .source-info {
+            font-size: 0.85em;
+            color: #555555;
+            margin-top: 10px;
+        }
+        .word-badge {
+            display: inline-block;
+            background-color: #E0F7FA;
+            color: #00796B;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
     </style>
 """, unsafe_allow_html=True)
 
 # Display logo
 st.image(logo_image, width=150)
 
-# Copyright below logo — force one line with no wrapping or clipping
+# Copyright directly below logo, in one line
 st.markdown(
     """
     <div style='width: 150px; text-align: center; font-size: 0.63em; color: #777777; white-space: nowrap; margin-top: 5px; margin-bottom: 20px;'>
@@ -61,7 +77,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
 
 # Title and description
 st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
@@ -73,29 +88,61 @@ st.markdown(
 
 # Chat history setup
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How can I assist you today?"}
-    ]
+    st.session_state.messages = []
 
-# Display past messages
+# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
+        if msg["role"] == "assistant" and msg.get("source_info"):
+            st.markdown(f"<div class='source-info'>{msg['source_info']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='word-badge'>📝 {msg['word_count']} words</div>", unsafe_allow_html=True)
 
 # User input
 user_input = st.chat_input("Type your question here...")
 
-# On new user input
 if user_input:
     st.chat_message("user").markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking like a researcher..."):
+        with st.spinner("🧑‍🏫 *'Great question — let's break it down together!'*"):
             try:
-                response = bot.chat(user_input)
-                st.markdown(response)
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                # Get response from chatbot
+                result = bot.rag_chain.invoke(user_input)
+                answer = result["result"]
+                sources = result.get("source_documents", [])
+                word_count = len(answer.split())
+
+                # Build source info block
+                # Build topic-level source info (no filename)
+                if sources:
+                    meta = sources[0].metadata
+                    parts = []
+                    if meta.get("title"):
+                        parts.append(f"📘 <i>{meta['title']}</i>")
+                    if meta.get("page"):
+                        parts.append(f"📄 Page {meta['page']}")
+                    source_info = " • ".join(parts)
+                else:
+                    source_info = "<i>Course materials</i>"
+
+
+                # Show answer
+                st.markdown(answer)
+
+                # Show source and word count badges
+                st.markdown(f"<div class='source-info'>{source_info}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-badge'>📝 {word_count} words</div>", unsafe_allow_html=True)
+
+                # Save to chat history
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer,
+                    "source_info": source_info,
+                    "word_count": word_count
+                })
+
             except Exception as e:
                 st.error("An error occurred while processing your request.")
                 st.exception(e)
