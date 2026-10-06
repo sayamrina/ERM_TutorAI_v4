@@ -103,7 +103,7 @@ if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     with st.chat_message("assistant"):
-        with st.spinner("🧑‍🏫 *'thingking!'*"):
+        with st.spinner("🧑‍🏫 *'Great question — let's break it down together!'*"):
             try:
                 # Get response from chatbot
                 result = bot.rag_chain.invoke(user_input)
@@ -111,23 +111,35 @@ if user_input:
                 sources = result.get("source_documents", [])
                 word_count = len(answer.split())
 
-                # Build topic-level source info (no filename)
-                if sources:
+                # Cek apakah ini pertanyaan umum/identitas (sapaan)
+                is_general_greeting = any(keyword in user_input.lower() for keyword in ["who are you", "siapa kamu", "hello", "hi", "halo", "selamat pagi", "selamat sore"])
+
+                source_info = None
+                if is_general_greeting:
+                    source_info = "🤖 <i>System Identity</i>"
+                elif sources:
+                    # Jika ada dokumen materi yang cocok
                     meta = sources[0].metadata
-                    parts = []
-                    if meta.get("title"):
-                        parts.append(f"📘 <i>{meta['title']}</i>")
-                    if meta.get("page"):
-                        parts.append(f"📄 Page {meta['page']}")
-                    source_info = " • ".join(parts)
+                    file_path = meta.get("source", "")
+                    import os
+                    file_name = os.path.basename(file_path)
+                    clean_name = os.path.splitext(file_name)[0].replace("_", " ")
+                    if clean_name:
+                        source_info = f"📘 <i>Course Materials: {clean_name}</i>"
+                    else:
+                        source_info = "📘 <i>Course Materials</i>"
                 else:
-                    source_info = "<i>Course materials</i>"
+                    # Jika pertanyaan ERM dijawab di luar dokumen lokal
+                    source_info = "🌐 <i>General Academic & Research Methodology Knowledge</i>"
 
                 # Show answer
                 st.markdown(answer)
 
-                # Show source and word count badges
-                st.markdown(f"<div class='source-info'>{source_info}</div>", unsafe_allow_html=True)
+                # Tampilkan sumber jika ada info sumbernya
+                if source_info:
+                    st.markdown(f"<div class='source-info'>{source_info}</div>", unsafe_allow_html=True)
+                
+                # Show word count badge
                 st.markdown(f"<div class='word-badge'>📝 {word_count} words</div>", unsafe_allow_html=True)
 
                 # Save to chat history
