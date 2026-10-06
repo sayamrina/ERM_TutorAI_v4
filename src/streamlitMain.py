@@ -103,7 +103,7 @@ if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     with st.chat_message("assistant"):
-        with st.spinner("🧑‍🏫 *'Great question — let's break it down together!'*"):
+        with st.spinner("🧑‍🏫 *'thinking'*"):
             try:
                 # Get response from chatbot
                 result = bot.rag_chain.invoke(user_input)
@@ -113,12 +113,20 @@ if user_input:
 
                 # Cek apakah ini pertanyaan umum/identitas (sapaan)
                 is_general_greeting = any(keyword in user_input.lower() for keyword in ["who are you", "siapa kamu", "hello", "hi", "halo", "selamat pagi", "selamat sore"])
+                
+                # Cek apakah bot memberikan kalimat penolakan
+                is_rejection = "Sorry, I am ERM Tutor, I do not want to answer that. Please focus on ERM related topics" in answer
 
                 source_info = None
-                if is_general_greeting:
+                
+                # Logika penentuan sumber yang baru:
+                if is_rejection:
+                    # Jika menolak, kosongkan sumber
+                    source_info = None
+                elif is_general_greeting:
                     source_info = "🤖 <i>System Identity</i>"
                 elif sources:
-                    # Jika ada dokumen materi yang cocok
+                    # Jika ada dokumen materi yang ditarik
                     meta = sources[0].metadata
                     file_path = meta.get("source", "")
                     import os
@@ -129,13 +137,13 @@ if user_input:
                     else:
                         source_info = "📘 <i>Course Materials</i>"
                 else:
-                    # Jika pertanyaan ERM dijawab di luar dokumen lokal
+                    # Jika dijawab dari luar dokumen lokal
                     source_info = "🌐 <i>General Academic & Research Methodology Knowledge</i>"
 
                 # Show answer
                 st.markdown(answer)
 
-                # Tampilkan sumber jika ada info sumbernya
+                # Tampilkan sumber HANYA jika source_info tidak None
                 if source_info:
                     st.markdown(f"<div class='source-info'>{source_info}</div>", unsafe_allow_html=True)
                 
