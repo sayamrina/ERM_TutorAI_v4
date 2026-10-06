@@ -19,7 +19,8 @@ class ChatBot:
         load_dotenv()
 
         # === Paths & Config ===
-        self.persist_directory = "./chroma_db"
+        # Kita ubah nama folder ke chroma_db_v2 agar sistem terpaksa membuat database baru dari awal
+        self.persist_directory = "./chroma_db_v2"
         self.embedding_model_name = "sentence-transformers/all-mpnet-base-v2"
 
         # === Embedding Model ===
@@ -32,9 +33,8 @@ class ChatBot:
                 embedding_function=embeddings
             )
         else:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            materials_path = os.path.join(current_dir, "materials", "*.pdf")
-            pdf_files = glob.glob(materials_path)
+            # Arahkan pencarian tepat ke dalam folder src/materials/
+            pdf_files = glob.glob('./src/materials/*.pdf')
             documents = []
             mid = MarkItDown()
             for file_path in pdf_files:
