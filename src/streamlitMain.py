@@ -59,6 +59,26 @@ st.markdown("""
             font-size: 0.85em;
             margin-top: 10px;
         }
+
+        /* --- STYLING KHUSUS TOMBOL DOWNLOAD --- */
+        .stDownloadButton > button {
+            background-color: #1a629b !important; /* Warna biru menyesuaikan logo */
+            color: #ffffff !important; /* Warna teks putih */
+            border: none !important;
+            border-radius: 8px !important;
+            font-weight: bold !important;
+            padding: 10px 20px !important;
+        }
+        
+        .stDownloadButton > button:hover {
+            background-color: #104875 !important; /* Biru sedikit lebih gelap saat disorot */
+            color: #ffffff !important;
+        }
+        
+        .stDownloadButton > button:disabled {
+            background-color: #cccccc !important;
+            color: #666666 !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
