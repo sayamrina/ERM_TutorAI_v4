@@ -1,3 +1,4 @@
+import streamlit as st
 import chromadb
 chromadb.api.client.SharedSystemClient.clear_system_cache()
 import os
@@ -109,7 +110,12 @@ class ChatBot:
 
 # === Example Usage ===
 if __name__ == "__main__":
-    chatbot = ChatBot()
+@st.cache_resource
+def inisiasi_tutor_ai():
+    # Fungsi ini memastikan dokumen hanya dibaca 1 kali oleh server
+    return ChatBot()
+
+chatbot = inisiasi_tutor_ai()
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit"]:
