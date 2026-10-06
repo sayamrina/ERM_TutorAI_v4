@@ -103,7 +103,7 @@ if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
 
     with st.chat_message("assistant"):
-        with st.spinner("🧑‍🏫 *'Great question — let's break it down together!'*"):
+        with st.spinner("🧑‍🏫 *'thingking!'*"):
             try:
                 # Get response from chatbot
                 result = bot.rag_chain.invoke(user_input)
