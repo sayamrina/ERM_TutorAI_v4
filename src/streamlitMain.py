@@ -1,3 +1,6 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 from RAG_ChatBot import ChatBot
 import streamlit as st
 from PIL import Image
