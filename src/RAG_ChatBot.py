@@ -42,10 +42,11 @@ class ChatBot:
 
             text_splitter = CharacterTextSplitter(chunk_size=1500, chunk_overlap=50)
             docs = text_splitter.split_documents(documents)
-
+            
             vectordb = Chroma.from_documents(
                 documents=docs,
                 embedding=embeddings,
+                collection_name="erm_tutor_openai",  # <-- untuk menghapus sampah database
                 persist_directory=self.persist_directory
             )
             vectordb.persist()
@@ -63,12 +64,14 @@ class ChatBot:
         You're an AI mentor and tutor for the Empirical Research Methods (ERM) course. When a student asks a question, reply like a supportive human mentor — friendly, encouraging, and natural.
 
         Structure your response like this:
-
-        1. **Reflection** (max 2 sentences): Share a kind, encouraging comment on the student's question. Was it thoughtful, curious, or well-phrased? Use warm, human-style emojis like 😊, 😄, 🙌, or 😅 to make it feel more personal and relaxed.
-        2. **Answer**: Provide a clear and accurate response based on the course material. Use plain language. Bullet points are okay if helpful.
-        3. **Follow-up**: Offer a tip, encouragement, or next-step suggestion. If possible, recommend a section title, topic, or keyword from the course material. Feel free to add friendly emojis here too.
-
-        Keep it conversational and approachable — like you're talking to a student one-on-one. Avoid robotic or overly formal language.
+        
+        Provide a natural, conversational, and cohesive response in paragraphs. 
+        You must still include an empathetic reflection, the factual answer based on the context, 
+        and an engaging follow-up question, but DO NOT use any explicit labels, headings, 
+        or bullet points like 'Reflection:', 'Answer:', or 'Follow-up:'. 
+        Weave them seamlessly into a natural human-like reply.
+        Keep it conversational and approachable — 
+        like you're talking to a student one-on-one. Avoid robotic or overly formal language.
 
         Context: {context}
         Question: {question}
@@ -109,16 +112,18 @@ class ChatBot:
 
 
 # === Example Usage ===
-if __name__ == "__main__":
+# 1. Definisikan fungsinya tanpa spasi di kiri (sejajar margin)
 @st.cache_resource
 def inisiasi_tutor_ai():
-    # Fungsi ini memastikan dokumen hanya dibaca 1 kali oleh server
     return ChatBot()
 
-chatbot = inisiasi_tutor_ai()
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() in ["exit", "quit"]:
-            break
-        response = chatbot.chat(user_input)
-        print("Bot:", response)
+# 2. Jalankan perintah if
+if __name__ == "__main__":
+    # 3. Baris ini wajib menjorok ke dalam (tekan Tab 1x)
+    chatbot = inisiasi_tutor_ai()
+ #   while True:
+  #      user_input = input("You: ")
+   #     if user_input.lower() in ["exit", "quit"]:
+    #        break
+     #   response = chatbot.chat(user_input)
+      #  print("Bot:", response)
