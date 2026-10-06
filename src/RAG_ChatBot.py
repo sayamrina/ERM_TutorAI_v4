@@ -32,7 +32,10 @@ class ChatBot:
                 embedding_function=embeddings
             )
         else:
-            pdf_files = glob.glob('./materials/*.pdf')
+            else:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            materials_path = os.path.join(current_dir, "materials", "*.pdf")
+            pdf_files = glob.glob(materials_path)
             documents = []
             mid = MarkItDown()
             for file_path in pdf_files:
@@ -97,8 +100,11 @@ class ChatBot:
 
       
 # === RAG Chain dengan Retriever yang Lebih Ketat ===
-        # Kita set k=4 agar bot membaca lebih banyak potongan dokumen lokal sekaligus
-        retriever = vectordb.as_retriever(search_kwargs={"k": 4})
+        # Kita set k=4 agar bot membaca lebih banyak potongan dokumen lokal sekaligus# === RAG Chain dengan Retriever MMR untuk Prioritas Dokumen Lokal ===
+        retriever = vectordb.as_retriever(
+            search_type="mmr", 
+            search_kwargs={"k": 4, "fetch_k": 10}
+        )
         
         self.rag_chain = RetrievalQA.from_chain_type(
             llm,
