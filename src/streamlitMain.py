@@ -72,7 +72,7 @@ st.image(logo_image, width=150)
 st.markdown(
     """
     <div style='width: 150px; text-align: center; font-size: 0.63em; color: #777777; white-space: nowrap; margin-top: 5px; margin-bottom: 20px;'>
-        © 2025 Amrina. All rights reserved.
+        © Developed by Amrina as part of a thesis project.
     </div>
     """,
     unsafe_allow_html=True
