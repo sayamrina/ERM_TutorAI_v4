@@ -32,7 +32,6 @@ class ChatBot:
                 embedding_function=embeddings
             )
         else:
-            else:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             materials_path = os.path.join(current_dir, "materials", "*.pdf")
             pdf_files = glob.glob(materials_path)
