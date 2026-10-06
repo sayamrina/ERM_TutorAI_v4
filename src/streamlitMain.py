@@ -60,25 +60,27 @@ st.markdown("""
             margin-top: 10px;
         }
 
-        /* --- STYLING KHUSUS TOMBOL DOWNLOAD --- */
-        .stDownloadButton > button {
-            background-color: #1a629b !important; /* Warna biru menyesuaikan logo */
-            color: #ffffff !important; /* Warna teks putih */
-            border: none !important;
-            border-radius: 8px !important;
-            font-weight: bold !important;
-            padding: 10px 20px !important;
-        }
-        
-        .stDownloadButton > button:hover {
-            background-color: #104875 !important; /* Biru sedikit lebih gelap saat disorot */
-            color: #ffffff !important;
-        }
-        
-        .stDownloadButton > button:disabled {
-            background-color: #cccccc !important;
-            color: #666666 !important;
-        }
+      # === TOMBOL BUKA PDF "ABOUT THIS APP" DI TAB BARU ===
+# Menggunakan tautan langsung ke GitHub viewer agar bisa dibaca di tab baru
+github_pdf_url = "https://github.com/sayamrina/ERM_TutorAI_v4/blob/main/src/About_ERM_App.pdf"
+
+st.markdown(f"""
+    <a href="{github_pdf_url}" target="_blank" style="text-decoration: none;">
+        <div style="
+            background-color: #1a629b; 
+            color: #ffffff; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            padding: 10px 20px; 
+            text-align: center;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        ">
+            📄 About this App
+        </div>
+    </a>
+    
     </style>
 """, unsafe_allow_html=True)
 
