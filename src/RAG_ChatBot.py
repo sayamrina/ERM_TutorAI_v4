@@ -1,3 +1,5 @@
+import chromadb
+chromadb.api.client.SharedSystemClient.clear_system_cache()
 import os
 import glob
 from dotenv import load_dotenv
