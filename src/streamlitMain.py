@@ -1,6 +1,7 @@
 from RAG_ChatBot import ChatBot
 import streamlit as st
 from PIL import Image
+import os
 
 # 1. LOAD GAMBAR DAN SET PAGE CONFIG (Wajib jadi perintah st pertama)
 logo_image = Image.open("logo_ermai.png")
@@ -10,14 +11,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. INISIASI BOT DENGAN CACHE (Ditaruh setelah page config)
+# 2. INISIASI BOT DENGAN CACHE
 @st.cache_resource
 def get_bot():
     return ChatBot()
 
 bot = get_bot()
 
-# Custom CSS (Diperbaiki agar warna teks chat jelas dan kontras)
+# Custom CSS
 st.markdown("""
     <style>
         body {
@@ -33,7 +34,6 @@ st.markdown("""
             margin-bottom: 10px;
             padding: 10px;
         }
-        /* Memaksa semua teks di dalam chat box berwarna biru tua pekat */
         .stChatMessage p, .stChatMessage div, .stChatMessage span {
             color: #003366 !important;
         }
@@ -114,22 +114,19 @@ if user_input:
                 # Cek apakah ini pertanyaan umum/identitas (sapaan)
                 is_general_greeting = any(keyword in user_input.lower() for keyword in ["who are you", "siapa kamu", "hello", "hi", "halo", "selamat pagi", "selamat sore"])
                 
-                # Cek apakah bot memberikan kalimat penolakan
-                is_rejection = "Sorry, I am ERM Tutor, I do not want to answer that. Please focus on ERM related topics" in answer
+                # Cek apakah bot memberikan kalimat penolakan (dibuat lebih kebal huruf besar/kecil)
+                is_rejection = "sorry, i do not want to answer that. Please focus on ERM related topics" in answer.lower() or "sorry, i do not want to answer that. Please focus on ERM related topics" in answer.lower()
 
                 source_info = None
                 
                 # Logika penentuan sumber yang baru:
                 if is_rejection:
-                    # Jika menolak, kosongkan sumber
                     source_info = None
                 elif is_general_greeting:
                     source_info = "🤖 <i>System Identity</i>"
                 elif sources:
-                    # Jika ada dokumen materi yang ditarik
                     meta = sources[0].metadata
                     file_path = meta.get("source", "")
-                    import os
                     file_name = os.path.basename(file_path)
                     clean_name = os.path.splitext(file_name)[0].replace("_", " ")
                     if clean_name:
@@ -137,7 +134,6 @@ if user_input:
                     else:
                         source_info = "📘 <i>Course Materials</i>"
                 else:
-                    # Jika dijawab dari luar dokumen lokal
                     source_info = "🌐 <i>General Academic & Research Methodology Knowledge</i>"
 
                 # Show answer
