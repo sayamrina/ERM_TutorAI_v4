@@ -82,7 +82,7 @@ st.markdown(
 st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
 st.markdown(
     "Ask me anything about the **Empirical Research Methods (ERM)** course. "
-    "I’ll give short, reliable answers based on your course materials — and not just that. "
+    "I’ll give short, reliable answers based on your course materials, and not just that. "
     "As your AI tutor, I’m also here to guide you, reflect on your questions, and support your learning journey like a real mentor would. 😊"
 )
 
