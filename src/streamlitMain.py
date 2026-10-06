@@ -9,6 +9,7 @@ st.set_page_config(
     page_icon=logo_image,
     layout="centered"
 )
+
 # 2. INISIASI BOT DENGAN CACHE (Ditaruh setelah page config)
 @st.cache_resource
 def get_bot():
@@ -16,8 +17,7 @@ def get_bot():
 
 bot = get_bot()
 
-
-# Custom CSS
+# Custom CSS (Diperbaiki agar warna teks chat jelas dan kontras)
 st.markdown("""
     <style>
         body {
@@ -27,18 +27,15 @@ st.markdown("""
             background-color: #e6f0ff;
             color: #003366;
         }
-        .css-18ni7ap.e8zbici2 {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #cce0ff;
-        }
         .stChatMessage {
             background-color: #f0f8ff;
             border-radius: 10px;
             margin-bottom: 10px;
             padding: 10px;
-            color: #003366;
+        }
+        /* Memaksa semua teks di dalam chat box berwarna biru tua pekat */
+        .stChatMessage p, .stChatMessage div, .stChatMessage span {
+            color: #003366 !important;
         }
         .stTextInput>div>div>input {
             background-color: #ffffff;
@@ -114,7 +111,6 @@ if user_input:
                 sources = result.get("source_documents", [])
                 word_count = len(answer.split())
 
-                # Build source info block
                 # Build topic-level source info (no filename)
                 if sources:
                     meta = sources[0].metadata
@@ -126,7 +122,6 @@ if user_input:
                     source_info = " • ".join(parts)
                 else:
                     source_info = "<i>Course materials</i>"
-
 
                 # Show answer
                 st.markdown(answer)
