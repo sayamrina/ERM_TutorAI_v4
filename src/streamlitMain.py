@@ -82,7 +82,7 @@ if os.path.exists(pdf_path):
         st.download_button(
             label="📄 About this App",
             data=pdf_file,
-            file_name="ERM_Tutor_AI_Overview.pdf",
+            file_name="About_ERM_App.pdf",
             mime="application/pdf"
         )
 else:
