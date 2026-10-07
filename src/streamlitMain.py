@@ -59,27 +59,6 @@ st.markdown("""
             font-size: 0.85em;
             margin-top: 10px;
         }
-
-      # === TOMBOL BUKA PDF "ABOUT THIS APP" DI TAB BARU ===
-# Menggunakan tautan langsung ke GitHub viewer agar bisa dibaca di tab baru
-github_pdf_url = "https://github.com/sayamrina/ERM_TutorAI_v4/blob/main/src/About_ERM_App.pdf"
-
-    <a href="{github_pdf_url}" target="_blank" style="text-decoration: none;">
-        <div style="
-            background-color: #1a629b; 
-            color: #ffffff; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            padding: 10px 20px; 
-            text-align: center;
-            display: inline-block;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        ">
-            📄 About this App
-        </div>
-    </a>
-    
     </style>
 """, unsafe_allow_html=True)
 
@@ -95,28 +74,32 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# === TOMBOL UNDUH PDF "ABOUT THIS APP" ===
-# Gunakan path absolut agar akurat mencari file di dalam folder yang sama dengan script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-pdf_path = os.path.join(current_dir, "About_ERM_App.pdf") # <-- Nama file disesuaikan dengan yang ada di GitHub
 
-if os.path.exists(pdf_path):
-    with open(pdf_path, "rb") as pdf_file:
-        st.download_button(
-            label="📄 About this App",
-            data=pdf_file,
-            file_name="ERM_Tutor_AI_Overview.pdf", # Nama file saat di-download pengguna
-            mime="application/pdf"
-        )
-else:
-    # Jika file belum diunggah, tombol tetap muncul tapi warnanya abu-abu
-    st.download_button(
-        label="📄 About this App (PDF coming soon)",
-        data=b"",
-        file_name="coming_soon.pdf",
-        disabled=True
-    )
-# =========================================
+# === TOMBOL BUKA PDF "ABOUT THIS APP" DI TAB BARU ===
+github_pdf_url = "https://github.com/sayamrina/ERM_TutorAI_v4/blob/main/src/About_ERM_App.pdf"
+
+button_html = f"""
+<a href="{github_pdf_url}" target="_blank" style="text-decoration: none;">
+    <button style="
+        background-color: #1a629b; 
+        color: #ffffff; 
+        border: none; 
+        border-radius: 8px; 
+        font-weight: bold; 
+        padding: 10px 20px; 
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    ">
+        📄 About this App
+    </button>
+</a>
+"""
+st.markdown(button_html, unsafe_allow_html=True)
+# ====================================================
+
 # Title and description
 st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
 st.markdown(
@@ -157,7 +140,7 @@ if user_input:
                 is_general_greeting = any(keyword in user_input.lower() for keyword in ["who are you", "siapa kamu", "hello", "hi", "halo", "selamat pagi", "selamat sore"])
                 
                 # Cek apakah bot memberikan kalimat penolakan (dibuat lebih kebal huruf besar/kecil)
-                is_rejection = "sorry, i do not want to answer that. Please focus on ERM related topics" in answer.lower() or "sorry, i do not want to answer that. Please focus on ERM related topics" in answer.lower()
+                is_rejection = "sorry, i do not want to answer that" in answer.lower() or "please focus on erm related topics" in answer.lower()
 
                 source_info = None
                 
@@ -169,6 +152,7 @@ if user_input:
                 elif sources:
                     meta = sources[0].metadata
                     file_path = meta.get("source", "")
+                    import os
                     file_name = os.path.basename(file_path)
                     clean_name = os.path.splitext(file_name)[0].replace("_", " ")
                     if clean_name:
