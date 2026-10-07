@@ -76,10 +76,10 @@ st.markdown(
 )
 
 # === TOMBOL BUKA PDF "ABOUT THIS APP" DI TAB BARU ===
-github_pdf_url = "https://github.com/sayamrina/ERM_TutorAI_v4/blob/main/src/About_ERM_App.pdf"
+gdrive_pdf_url = "https://drive.google.com/file/d/1t1EzlGfTzWhKX-xeetfqg7Sns7t1nE_Z/view?usp=drive_link"
 
 button_html = f"""
-<a href="{github_pdf_url}" target="_blank" style="text-decoration: none;">
+<a href="{gdrive_pdf_url}" target="_blank" style="text-decoration: none;">
     <button style="
         background-color: #1a629b; 
         color: #ffffff; 
