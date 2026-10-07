@@ -95,7 +95,28 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+# === TOMBOL UNDUH PDF "ABOUT THIS APP" ===
+# Gunakan path absolut agar akurat mencari file di dalam folder yang sama dengan script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+pdf_path = os.path.join(current_dir, "About_ERM_App.pdf") # <-- Nama file disesuaikan dengan yang ada di GitHub
 
+if os.path.exists(pdf_path):
+    with open(pdf_path, "rb") as pdf_file:
+        st.download_button(
+            label="📄 About this App",
+            data=pdf_file,
+            file_name="ERM_Tutor_AI_Overview.pdf", # Nama file saat di-download pengguna
+            mime="application/pdf"
+        )
+else:
+    # Jika file belum diunggah, tombol tetap muncul tapi warnanya abu-abu
+    st.download_button(
+        label="📄 About this App (PDF coming soon)",
+        data=b"",
+        file_name="coming_soon.pdf",
+        disabled=True
+    )
+# =========================================
 # Title and description
 st.title("Hello! I'm your AI tutor for Empirical Research Methods (ERM) course.")
 st.markdown(
