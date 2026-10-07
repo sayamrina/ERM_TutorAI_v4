@@ -64,7 +64,6 @@ st.markdown("""
 # Menggunakan tautan langsung ke GitHub viewer agar bisa dibaca di tab baru
 github_pdf_url = "https://github.com/sayamrina/ERM_TutorAI_v4/blob/main/src/About_ERM_App.pdf"
 
-st.markdown(f"""
     <a href="{github_pdf_url}" target="_blank" style="text-decoration: none;">
         <div style="
             background-color: #1a629b; 
