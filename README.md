@@ -1,63 +1,106 @@
-# 🎓 ERM Tutor-AI: A RAG-Based Educational Tutor
+<p align="center"><img src="docs/img/logo.png" width="110" alt="ERM Tutor-AI logo"></p>
 
-This project was initially completed and presented in November 2025, during which the system was running exclusively in a local environment. In October 2026, the source code and database were published to GitHub and deployed via Streamlit Cloud, allowing its functionality to be accessed and tested directly online.
+# ERM Tutor-AI: a RAG-based tutor for Empirical Research Methods
 
-Developed as part of a thesis project for the Master of Educational Technology program at Saarland University, this project integrates Generative Artificial Intelligence (GAI) with the Retrieval-Augmented Generation (RAG) framework to create an interactive AI tutor assistant for students taking the Empirical Research Methods (ERM) course.
+**Master's thesis project · M.Sc. Educational Technology · Saarland University**
+Amrina · Supervisors: Dominik Thüs and Dr. Sarah Malone
 
-----
+🌐 **Project page:** https://sayamrina.github.io/ERM_TutorAI_v4/ · 🚀 **Live app:** https://erm-tutorai.streamlit.app/
 
-## 📖 Background and Problem Statement
+ERM Tutor-AI is a web-based chatbot tutor for students in the *Empirical Research Methods* (ERM) course. It combines a large language model (GPT-4o) with **Retrieval-Augmented Generation (RAG)**: before answering, it retrieves passages from the official course materials, so its answers stay grounded in what is taught. It also shows students where an answer came from, and it behaves like a tutor rather than a search engine.
 
-Although Large Language Models (LLMs) possess remarkable generative capabilities, they are prone to "hallucinations"—a phenomenon where the AI generates information that sounds plausible but is factually incorrect or unfounded. In a higher education context that demands strict precision, these inaccuracies can mislead students and disrupt the learning process. 
-
-To mitigate this risk, ERM Tutor-AI combines the capabilities of a GPT-based model with a curated knowledge database containing validated ERM course materials and literature[cite: 11]. By leveraging the RAG architecture, the system is forced to retrieve information directly from official course materials before generating a response, ensuring that the provided answers are always accurate, contextually relevant, and free from misinformation.
-
----
-
-## 🛠️ Technology Stack
-
-*   **Frontend / UI:** Streamlit[cite: 57] for building an interactive, user-friendly web interface that facilitates real-time dialogue[cite: 61, 62].
-*   **Large Language Model (LLM):** OpenAI GPT-4o accessed via API for advanced natural language understanding and generation[cite: 57, 58].
-*   **Orchestration Framework:** LangChain to manage the data flow between the user interface, the vector database, and the LLM[cite: 60].
-*   **Vector Database:** ChromaDB[cite: 57] for storing embedded text chunks and performing efficient semantic similarity searches[cite: 60].
-*   **Embeddings:** `sentence-transformers` (via Hugging Face) to convert text chunks into high-dimensional numeric representations to capture semantic meaning[cite: 58].
-*   **Document Parsing:** Markitdown for extracting structured metadata from course PDFs to ensure high searchability and transparency[cite: 60].
+In a comparison on 20 course questions, two course instructors rated ERM Tutor-AI's answers **6.75 / 7** on average, against **6.00 / 7** for ChatGPT-4o. ERM Tutor-AI's answers were also about 30% shorter.
 
 ---
 
-## 📂 Project Structure
+## Why
+
+LLMs can produce answers that sound right but are wrong ("hallucinations"). In a methods course, a confident but incorrect explanation of a p-value or an ANOVA can do real damage to learning. ERM Tutor-AI addresses this by grounding every answer in the course's own lecture materials and by making the source visible to the student.
+
+## What it does
+
+- **Grounded answers.** Retrieves the most relevant chunks from 12 ERM lecture units (from basics and experimental design to t-test, ANOVA, MANOVA, regression, non-parametric tests and bias in research) and answers from them first.
+- **Shows its source.** Every answer is labelled with where it comes from: *Course Materials: <unit>*, or *General Academic & Research Methodology Knowledge* when the course materials do not cover it.
+- **Tutor behaviour.** Answers include a short empathetic reflection, the explanation and a follow-up question, written as one natural reply.
+- **Stays on topic.** Questions unrelated to research methods are politely declined.
+- **Concise.** Each answer displays its word count; the tutor aims for focused rather than exhaustive replies.
+
+## How it works
+
+<p align="center"><img src="docs/img/flowchart.jpg" width="520" alt="ERM Tutor-AI flowchart"></p>
+
+1. **Indexing.** The course PDFs are converted to text with Markitdown, split into chunks (1,500 characters, 50 overlap) and embedded with `sentence-transformers/all-mpnet-base-v2`. The vectors are stored in ChromaDB.
+2. **Retrieval.** For each question, the 4 most relevant chunks are selected with maximal marginal relevance (MMR, from 10 candidates), which keeps the retrieved passages diverse.
+3. **Generation.** GPT-4o (temperature 0) receives the question, the retrieved passages and a tutor prompt with clear priorities: course materials first, general ERM knowledge second, refusal for off-topic questions.
+4. **Interface.** A Streamlit chat app displays the answer, its source and its length.
+
+| Layer | Tools |
+|---|---|
+| Interface | Streamlit |
+| LLM | OpenAI GPT-4o (API) |
+| Orchestration | LangChain (RetrievalQA) |
+| Vector store | ChromaDB |
+| Embeddings | sentence-transformers (Hugging Face) |
+| PDF parsing | Markitdown |
+
+## Design process
+
+The tutor was built with a design-based research approach in four interface iterations: from a minimal question–answer prototype, through clearer structure and prompt refinements, to a branded, user-centred interface with a short onboarding message.
+
+| Version 1 | Version 2 | Version 3 | Version 4 (final) |
+|---|---|---|---|
+| ![v1](docs/img/ui_v1.jpg) | ![v2](docs/img/ui_v2.jpg) | ![v3](docs/img/ui_v3.jpg) | ![v4](docs/img/ui_v4.jpg) |
+
+## Evaluation
+
+- **Questions:** 20 representative questions from the weekly ERM assignments, covering all course units.
+- **Systems:** ERM Tutor-AI vs. ChatGPT-4o as the baseline.
+- **Raters:** two course instructors/tutors, using a 7-point rubric adapted from Lee (2024): accuracy, relevance, excessive or insufficient information, user perception, and tutoring behaviour.
+
+| | ERM Tutor-AI | ChatGPT-4o |
+|---|---|---|
+| Mean rubric score (± SD), 40 ratings each | **6.75 ± 0.44** | 6.00 ± 0.76 |
+| Mean answer length (words) | **198** | 280 |
+| Median answer length (words) | 185 | 265 |
+
+A two-way ANOVA showed a significant effect of the model (F(1, 76) ≈ 32.8, p < .001) and no significant effect of the instructor or of the interaction. ERM Tutor-AI's answers were rated higher and were more concise and more consistent in length.
+
+## Limitations
+
+- The evaluation used 20 questions and two raters. Inter-rater reliability was not reported, and the ratings were not blind to the system.
+- One rater gave the maximum score to almost all ERM Tutor-AI answers, so ceiling effects are likely.
+- There was no study with students yet, so effects on learning and engagement are unknown.
+- The knowledge base is limited to the course materials, and the system was not compared with other architectures (e.g. fine-tuning or hybrid retrieval).
+
+## Next steps
+
+A study with students (learning gains, engagement, trust), a broader knowledge base, citations at passage level, and adaptive feedback based on what each student already knows.
+
+## Run it locally
+
+```bash
+git clone https://github.com/sayamrina/ERM_TutorAI_v4.git
+cd ERM_TutorAI_v4
+pip install -r requirements.txt
+export OPENAI_API_KEY=...          # your own key
+streamlit run src/streamlitMain.py
+```
+
+On the first run, the vector database is built from the PDFs in `src/materials/`.
+
+## Repository structure
 
 ```text
-erm_tutorai/
-│
-├── chroma_db/                 # Pre-built vector database containing ERM course embeddings
-├── src/
-│   ├── RAG_ChatBot.py         # Backend logic, LLM integration, and RAG pipeline
-│   └── streamlit.py           # Frontend UI, chat interface, and session state management
-│
-├── logo_ermai.png             # Application logo and visual assets
-├── requirements.txt           # List of project dependencies
-└── README.md                  # Project overview and instructions
+src/
+  streamlitMain.py    Streamlit interface (chat, source labels, word count)
+  RAG_ChatBot.py      RAG pipeline: parsing, chunking, embeddings, retrieval, prompt, GPT-4o
+  materials/          ERM course PDFs used as the knowledge base
+chroma_db/            vector database (built on first run)
+docs/                 project page (GitHub Pages)
+```
 
----
+## Author
 
-📦 Dependencies
+**Amrina** · [LinkedIn](https://www.linkedin.com/in/amrina-ali-487025119/) · [GitHub](https://github.com/sayamrina)
 
-The project relies on the following primary Python libraries (specified in requirements.txt):
-streamlit
-langchain
-langchain-openai
-langchain-community
-chromadb
-sentence-transformers
-pillow
-
-📊 Evaluation and Performance Results
-
-The reliability of the ERM Tutor-AI system was comprehensively tested through a direct performance comparison against a baseline LLM model (ChatGPT-4o). Both systems were given 20 representative questions drawn from the ERM curriculum[cite: 11]. A panel of instructors evaluated these responses based on strict criteria, including factual accuracy, relevance, clarity, and tutoring behavior.
-
-1. Superior Accuracy and Relevance: ERM Tutor-AI consistently outperformed ChatGPT-4o, achieving an average quality score of 6.75 out of a 7.00 scale, compared to the 6.00 score achieved by the baseline model.
-2. Context-Based Precision: The evaluation results proved that ERM Tutor-AI is capable of delivering answers that are instructionally structured and contextually sound.
-3. Pedagogical Tutoring Behavior: Unlike standard LLMs that tend to provide lengthy but unfocused answers, ERM Tutor-AI is designed to act like a mentor. The system provides an appropriate amount of information, anticipates user confusion, and actively guides students using structured reflections, feedback, and follow-up questions.
-
- © 2026 Amrina. All rights reserved.
+© 2025–2026 Amrina. All rights reserved.
