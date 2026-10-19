@@ -4,7 +4,7 @@ This project was initially completed and presented in November 2025, during whic
 
 Developed as part of a thesis project for the Master of Educational Technology program at Saarland University, this project integrates Generative Artificial Intelligence (GAI) with the Retrieval-Augmented Generation (RAG) framework to create an interactive AI tutor assistant for students taking the Empirical Research Methods (ERM) course.
 
----
+----
 
 ## 📖 Background and Problem Statement
 
