@@ -5,7 +5,7 @@
 **Master's thesis project · M.Sc. Educational Technology · Saarland University**
 Amrina · Supervisors: Dominik Thüs and Dr. Sarah Malone
 
-🌐 **Project page:** https://sayamrina.github.io/ERM_TutorAI_v4/ · 🚀 **Live app:** https://erm-tutorai.streamlit.app/
+🌐 **Project page:** https://sayamrina.github.io/ERM_TutorAI_v4/ · 🚀 **Live app:** https://erm-tutorai.streamlit.app/ · 👤 **Portfolio:** https://sayamrina.github.io
 
 ERM Tutor-AI is a web-based chatbot tutor for students in the *Empirical Research Methods* (ERM) course. It combines a large language model (GPT-4o) with **Retrieval-Augmented Generation (RAG)**: before answering, it retrieves passages from the official course materials, so its answers stay grounded in what is taught. It also shows students where an answer came from, and it behaves like a tutor rather than a search engine.
 
