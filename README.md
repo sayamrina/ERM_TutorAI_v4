@@ -67,7 +67,7 @@ A two-way ANOVA showed a significant effect of the model (F(1, 76) ≈ 32.8, p <
 
 ## Limitations
 
-- The evaluation used 20 questions and two raters. Inter-rater reliability was not reported, and the ratings were not blind to the system.
+- The evaluation used 20 questions and two raters, who rated without knowing which system had written an answer. Inter-rater reliability was not reported.
 - One rater gave the maximum score to almost all ERM Tutor-AI answers, so ceiling effects are likely.
 - There was no study with students yet, so effects on learning and engagement are unknown.
 - The knowledge base is limited to the course materials, and the system was not compared with other architectures (e.g. fine-tuning or hybrid retrieval).
